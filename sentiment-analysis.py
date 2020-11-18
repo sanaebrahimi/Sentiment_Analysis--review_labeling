@@ -169,7 +169,11 @@ wordnet_lemmatizer = WordNetLemmatizer()
 
 sentiment_words = {}
 twogram_words = defaultdict(lambda : 0)
+
 def expand_contractions(text, contraction_mapping=CONTRACTION_MAP):
+    
+    #using a given text and a contraction map, this function handls contractions by expanding them to the complete form
+    
     global CONTRACTION_MAP
     contractions_pattern = re.compile('({})'.format('|'.join(contraction_mapping.keys())),
                                       flags=re.IGNORECASE | re.DOTALL)
@@ -244,7 +248,6 @@ def sentiment_word(pathlist):
     wk = set(wk)
     wk = list(wk)
 
-    #     print(wordcount[0], wordcount[1])
 
     n1 = wordcount[0]
     n2 = wordcount[1]
@@ -257,8 +260,7 @@ def sentiment_word(pathlist):
         z, pv = sm.stats.proportions_ztest([k1, k2], [n1, n2])
         if pv < 0.01:
             sentiment_words[wk[k]] = (d1[wk[k]], d2[wk[k]], pv)
-            #print("{0:16s} {1:8d} {2:8d} {3:12.6f}".
-             #     format(wk[k], d1[wk[k]], d2[wk[k]], pv))
+            
     print(len(sentiment_words))
 
 
@@ -300,7 +302,6 @@ def process_2gram(pathlist):
     wk = set(wk)
     wk = list(wk)
 
-                        #     print(wordcount[0], wordcount[1])
 
     n1 = wordcount[0]
     n2 = wordcount[1]
@@ -310,14 +311,10 @@ def process_2gram(pathlist):
         if k1 * k2 < 59:
             continue
         z, pv = sm.stats.proportions_ztest([k1, k2], [n1, n2])
-        #if wk[k][0] == 'actually' and wk[k][1] == 'good':
-        #    print('actually good', pv)
+        
         if pv < 0.2:
             twogram_words[(wk[k][0], wk[k][1])] = (d1[wk[k]], d2[wk[k]], pv)
-            #print(twogram_words[(wk[k][0], wk[k][1])])
-            #print("({0:16s},{1:16s}) {2:8d} {3:8d} {4:12.6f}".format(wk[k][0], wk[k][1], d1[wk[k]], d2[wk[k]], pv))
-                        #find_flag = False
-    #print(d1)
+            
 
 
 
@@ -344,8 +341,7 @@ def process(s):
         #print(key)
         key = wordnet_lemmatizer.lemmatize(key, pos="v")
         if key in sentiment_words:
-            #pos,neg = sentiment_words[key][0], sentiment_words[key][1]
-            #xylist.append((x, y, pos <= neg))
+            
             tmpdict[key] += 1
             nwords += 1
     print(tmpdict)
@@ -384,7 +380,7 @@ def process(s):
         print(pos_f)
         print(neg_f)
 
-        #slist.append((key,f))
+        
     return pos_score,neg_score , xylist, slist
 
 if __name__ == "__main__":
@@ -401,8 +397,7 @@ if __name__ == "__main__":
 
     doctree = ET.parse(path)
     root = doctree.getroot()
-    #except:
-    #    print('Some error!')
+   
 
     for child in root:
         for item in child:
@@ -411,8 +406,7 @@ if __name__ == "__main__":
             if item.tag == "review_text":
                 p_score, n_score, xy, slist = process(item.text)
 
-                #highlight = prepare(item.text, xy)
-                #print(highlight)
+                
 
                 for t in slist:
                     print("{0:7.3f}  {1:s}".format(t[1], t[0]))
@@ -424,9 +418,4 @@ if __name__ == "__main__":
                     score= n_score
                 print("score = {0:0.6f} which is {1:s}".format(score, guess))
         reply = input("? ")
-        #if len(reply) > 0 and reply[0] == 'q':
-        #    break
-
-   # score, xy, slist = process('this movie is actually so gaod, I liked ti')
-   # guess = "positive" if score >= 1.0 else "negative"
-   # print("score = {0:0.6f} which is {1:s}".format(score, guess))'''
+        
